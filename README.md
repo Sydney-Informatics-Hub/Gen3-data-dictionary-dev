@@ -4,7 +4,7 @@ This repository contains dev notes and instructions for how to create and manage
 
 ## Set up and tooling
 
-Run notebooks provided here with [PyCharm community edition](https://www.jetbrains.com/pycharm/download) or VScode. 
+Run notebooks provided here with [PyCharm community edition](https://www.jetbrains.com/pycharm/download) or VScode. Notebooks/scripts TBC. 
 
 ### Gen3 schema dev repository
 
@@ -111,7 +111,7 @@ Trim the following properties from the remaining objects specified in `kf_proper
 Add the following properties to outcomes in `thyroid_properties_new.xlsx`: 
 
 * `self_report.yaml`
-*  ``
+*  `surgery.yaml`
 
 ### Add new objects to the schema
 
