@@ -1,3 +1,5 @@
 .venv/
 gen3schemadev
 kf-dictionary
+.vscode/
+.DS_Store
