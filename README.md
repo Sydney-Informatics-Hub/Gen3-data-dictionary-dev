@@ -13,8 +13,6 @@ Contains tools and notebooks for creating and managing Gen3 data dictionaries us
 * [`gen3schemadev`](https://github.com/AustralianBioCommons/gen3schemadev/tree/main/gen3schemadev) is an object relational mapping library for Gen3 schemas
 * [`jupyter`](https://github.com/AustralianBioCommons/gen3schemadev/tree/main/jupyter) contains notebooks for schema development and schema development using gdocs as a template, and plausible/synthetic data creation. 
 
-**gen3schemadev**
-
 ## Creating a schema from existing data dictionary 
 
 See [`schema_template_framework.ipynb`](schema_template_framework.ipynb) for example of how we used the Kidsfirst data dictionary as a template for a new schema for a different project. Used `gen3schemadev` library to work with the bundle. Before running do the following: 
