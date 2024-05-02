@@ -87,6 +87,7 @@ Manually remove rows from Excel doc for objects that are not needed in the new s
 * `aligned_reads.yaml`
 
 ```python 
+# How was this removed from the bundle
 
 ```
 
@@ -101,7 +102,7 @@ Trim the following properties from the remaining objects specified in `kf_proper
 * `sample.yaml`: time_between_clamping_and_freezing, time_between_excision_and_freezing 
 
 ```python
-
+# How was this removed from the bundle
 ```
 
 ### Add new properties to remaining objects
