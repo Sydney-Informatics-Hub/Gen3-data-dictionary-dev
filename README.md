@@ -200,3 +200,4 @@ Add the following objects to the new schema:
 ## Resources 
 
 * [UMCCR's Gen3 builder](https://australianbiocommons.github.io/umccr-dictionary/)
+* [UMCCR-dictionary](https://github.com/AustralianBioCommons/umccr-dictionary)
