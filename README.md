@@ -174,7 +174,13 @@ ls -lsha ./umccr-dictionary/dictionary/schema_dev/gdcdictionary/schemas/
 Need to have Docker desktop installed to run the following commands: 
 
 ```bash 
+test -d ../umccr-dictionary/schema/schema_dev.json && rm ../umccr-dictionary/schema/schema_dev.json
+make compile program=schema_dev
+make validate program=schema_dev
+open http://localhost:8080/#schema/schema_dev.json
 
+#FOLLOW ON FROM HERE: DOESNT RENDER ANYTHING THOUGH
+https://github.com/AustralianBioCommons/ACDCSchemaDev/blob/main/schema_dev_framework.ipynb
 ```
 
 ### TODO. Add new properties to remaining objects
