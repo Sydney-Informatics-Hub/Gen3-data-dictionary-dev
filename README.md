@@ -37,8 +37,7 @@ cp -r kf-dictionary/gdcdictionary/schemas/* ./gen3schemadev/schema/kidsfirst
 # Setup virtual environment and install libraries from gen3schemadev 
 python3 -m venv .venv
 source .venv/bin/activate
-cd ./gen3schemadev && pip3 install -r requirements.txt
-python3 
+cd ./gen3schemadev && pip3 install -r requirements.txt 
 ```
 
 ```python
@@ -49,21 +48,9 @@ from gen3schemadev.schemabundle import ConfigBundle
 import pandas as pd
 ```
 
-### Remove unwanted objects from the new schema
+### 1. Remove unwanted objects from the new schema
 
-```python
-bundle = ConfigBundle("/Users/gsam0138/Documents/Projects/Gen3-data-dictionary-dev/gen3schemadev/schema/kidsfirst")
-bundle.objects['participant.yaml'].get_data()
-
-data = []
-for obj in bundle.objects:
-    for attrib in bundle.objects[obj].get_properties():
-        data.append({"object":obj,"property":attrib})
-dataframe = pd.DataFrame(data)
-dataframe.to_excel("./kf_objects.xlsx",index=False)
-```
-
-Manually remove rows from Excel doc for objects that are not needed in the new schema. The following objects have been removed in their entirety:  
+Manually remove rows from Excel doc for objects that are not needed in the new schema. The following objects have been removed in their entirety manually:  
 
 * `aliquot.yaml`
 * `submitted_aligned_reads.yaml`
@@ -86,12 +73,24 @@ Manually remove rows from Excel doc for objects that are not needed in the new s
 * `somatic_mutation_calling_workflow.yaml`
 * `aligned_reads.yaml`
 
-```python 
-# How was this removed from the bundle
+Currently no function in the gen3schemadev library to remove these objects from the schema (e.g. aliquot), so was done manually for each entry: 
 
+```bash
+cd schema/kidsfirst
+grep aliquot * 
 ```
 
-### Remove unwanted properties from remaining objects
+Search through yaml's that have listed `aliquot` and remove the relevant object entry from the schema's links, required, properties. 
+
+Load trimmed kf yamls into thyroid bundle: 
+
+```python
+os.mkdir("/Users/gsam0138/Documents/Projects/Gen3-pycharm/pythonProject/gen3schemadev/schema/thyroid")
+bundle = ConfigBundle("/Users/gsam0138/Documents/Projects/Gen3-pycharm/pythonProject/gen3schemadev/schema/kidsfirst")
+bundle.dump("/Users/gsam0138/Documents/Projects/Gen3-pycharm/pythonProject/gen3schemadev/schema/out") # Don't override your original files
+```
+
+### 2. Remove unwanted properties from remaining objects
 
 Trim the following properties from the remaining objects specified in `kf_properties_trimmed.xlsx`. The following have been removed: 
 
@@ -99,20 +98,93 @@ Trim the following properties from the remaining objects specified in `kf_proper
 * `demographic.yaml`: age_at_last_followup_days, race
 * `outcome.yaml`: disease_related, age_at_event_days
 * `phenotype.yaml`: hpo_id, snomed_id_phenotype
-* `sample.yaml`: time_between_clamping_and_freezing, time_between_excision_and_freezing 
+* `sample.yaml`: time_between_clamping_and_freezing, time_between_excision_and_freezing # haven't removed this one yet, unsure
+
+To get summary of the objects: 
 
 ```python
-# How was this removed from the bundle
+yaml_files = ['participant.yaml', 'demographic.yaml', 'outcome.yaml', 'phenotype.yaml', 'sample.yaml']
+for yaml_file in yaml_files:
+    data = bundle.objects[yaml_file].get_data()
+    # Do something with the data, such as printing it
+    print(data)
 ```
 
-### Add new properties to remaining objects
+To remove properties from `participant.yaml`:
+
+```python
+bundle.objects['participant.yaml'].remove_property('families')
+bundle.objects['participant.yaml'].remove_property('days_lost_to_followup')
+bundle.objects['participant.yaml'].remove_property('is_proband')
+bundle.objects['participant.yaml'].remove_property('lost_to_followup')
+```
+
+To remove properties from `demographic.yaml`:
+
+```python
+bundle.objects['demographic.yaml'].remove_property('age_at_last_followup_days')
+bundle.objects['demographic.yaml'].remove_property('race')
+```
+
+To remove properties from `outcome.yaml`:
+
+```python
+bundle.objects['outcome.yaml'].remove_property('disease_related')
+bundle.objects['outcome.yaml'].remove_property('age_at_event_days')
+```
+
+To remove properties from `phenotype.yaml`:
+
+```python
+bundle.objects['phenotype.yaml'].remove_property('hpo_id')
+bundle.objects['phenotype.yaml'].remove_property('snomed_id_phenotype')
+```
+
+```python
+data = []
+for obj in bundle.objects:
+    for attrib in bundle.objects[obj].get_properties():
+        data.append({"object":obj,"property":attrib})
+dataframe = pd.DataFrame(data)
+dataframe.to_excel("./thyroid_from_kf_objects_properties.xlsx",index=False)
+```
+
+### 3. Export to DAG 
+
+```bash
+cd .. 
+test -d umccr-dictionary || git submodule add https://github.com/AustralianBioCommons/umccr-dictionary.git umccr-dictionary
+```
+
+```bash
+cd ./umccr-dictionary && git pull
+make pull
+make up
+make ps
+```
+
+```bash
+# Moving schema_out to umccr-dictionary
+test -d ./umccr-dictionary/dictionary/schema_dev && rm -r ./umccr-dictionary/dictionary/schema_dev
+mkdir -p ./umccr-dictionary/dictionary/schema_dev/gdcdictionary/schemas
+cp ./schema/out/* ./umccr-dictionary/dictionary/schema_dev/gdcdictionary/schemas/
+ls -lsha ./umccr-dictionary/dictionary/schema_dev/gdcdictionary/schemas/
+```
+
+Need to have Docker desktop installed to run the following commands: 
+
+```bash 
+
+```
+
+### TODO. Add new properties to remaining objects
 
 Add the following properties to outcomes in `thyroid_properties_new.xlsx`: 
 
 * `self_report.yaml`
 *  `surgery.yaml`
 
-### Add new objects to the schema
+### TODO. Add new objects to the schema
 
 Add the following objects to the new schema: 
 
