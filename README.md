@@ -28,7 +28,7 @@ make ps # display status of containers
 3. Refactor the yamls into json 
 
 ```bash 
-
+cp -r ../dictionary/thyroid dictionary/.
 make compile program=thyroid # write schema to json 
 make validate program=thyroid # do validation checks
 ```
@@ -36,5 +36,5 @@ make validate program=thyroid # do validation checks
 4. Generate and visualise the DAG 
 
 ```bash
-open http://localhost:8080/#schema/thyroid_dev.json
+open http://localhost:8080/#schema/thyroid.json
 ```
