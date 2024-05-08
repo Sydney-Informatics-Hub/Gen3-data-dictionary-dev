@@ -1,0 +1,35 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "core_metadata_collection"
+title: Core Metadata Collection
+type: object
+namespace: http://gdc.nci.nih.gov
+category: administrative
+program: '*'
+project: '*'
+description: >
+  Structured description of a collection of several dataset
+additionalProperties: false
+submittable: true
+validators: null
+
+systemProperties:
+  - id
+  - project_id
+  - state
+  - created_datetime
+  - updated_datetime
+
+links:
+
+uniqueKeys:
+  - [id]
+  - [project_id, submitter_id]
+
+required:
+  - submitter_id
+  - type
+  - projects
+
+properties:
+  $ref: "_definitions.yaml#/ubiquitous_properties"

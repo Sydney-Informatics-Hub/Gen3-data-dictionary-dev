@@ -1,0 +1,43 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "aligned_reads_index"
+title: Aligned Reads Index
+type: object
+namespace: http://gdc.nci.nih.gov
+category: index_file
+program: '*'
+project: '*'
+description: "Data file containing the index for a set of aligned reads."
+additionalProperties: false
+submittable: true
+validators: null
+
+systemProperties:
+  - id
+  - project_id
+  - created_datetime
+  - updated_datetime
+  - state
+  - file_state
+  - error_type
+
+links:
+
+
+required:
+  - submitter_id
+  - type
+  - file_name
+  - file_size
+  - md5sum
+  - data_category
+  - data_type
+  - data_format
+
+uniqueKeys:
+  - [ id ]
+  - [ project_id, submitter_id ]
+
+properties:
+  $ref: "_definitions.yaml#/data_file_properties"
+
