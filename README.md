@@ -6,4 +6,6 @@ This repository contains dev notes and instructions for how to create and manage
 
 Run notebooks provided here with [PyCharm community edition](https://www.jetbrains.com/pycharm/download) or VScode. 
 
+## Schema dev 
 
+See [USyd gen3 data dictionary repo](https://github.com/Sydney-Informatics-Hub/usyd-gen3-data-dictionary). 

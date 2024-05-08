@@ -15,7 +15,7 @@ Contains tools and notebooks for creating and managing Gen3 data dictionaries us
 
 ## Creating a schema from existing data dictionary 
 
-See [`schema_template_framework.ipynb`](schema_template_framework.ipynb) for example of how we used the Kidsfirst data dictionary as a template for a new schema for a different project. Used `gen3schemadev` library to work with the bundle. Before running do the following: 
+Used `gen3schemadev` library to work with the bundle. Before running do the following: 
 
 ```bash
 # Clone kf-dictionary repository, will be using this as template: 
