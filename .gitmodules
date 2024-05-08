@@ -1,0 +1,3 @@
+[submodule "usyd-gen3-data-dictionary"]
+	path = usyd-gen3-data-dictionary
+	url = https://github.com/Sydney-Informatics-Hub/usyd-gen3-data-dictionary
