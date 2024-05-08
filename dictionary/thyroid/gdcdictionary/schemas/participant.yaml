@@ -1,0 +1,64 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: participant
+title: Participant
+type: object
+namespace: http://gdc.nci.nih.gov
+category: administrative
+program: '*'
+project: '*'
+description: 'The collection of all data related to a specific subject in the context
+  of a specific project.'
+additionalProperties: false
+submittable: true
+validators: null
+
+systemProperties:
+  - id
+  - project_id
+  - state
+  - created_datetime
+  - updated_datetime
+
+links:
+- name: projects
+  backref: participants
+  label: member_of
+  target_type: project
+  multiplicity: many_to_one
+  required: true
+uniqueKeys:
+  - [id]
+  - [project_id, submitter_id]
+
+required:
+  - submitter_id
+  - type
+  - projects
+
+properties:
+  $ref: "_definitions.yaml#/ubiquitous_properties"
+  disease_type:
+    term:
+      $ref: _terms.yaml#/disease_type
+    type: string
+  index_date:
+    term:
+      $ref: _terms.yaml#/index_date
+    enum:
+    - Diagnosis
+    - First Patient Visit
+    - Study Enrollment
+  primary_site:
+    term:
+      $ref: _terms.yaml#/primary_site
+    type: string
+  external_id:
+    term:
+      $ref: _terms.yaml#/external_id
+    type: string
+  consent_type:
+    description: Type of the consent participant belongs to
+    type: string
+  projects:
+    $ref: _definitions.yaml#/to_one_project

@@ -1,0 +1,76 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: analysis_metadata
+title: Analysis Metadata
+type: object
+namespace: http://gdc.nci.nih.gov
+category: metadata_file
+project: '*'
+program: '*'
+description: 'Data file containing the analysis information from the SRA XML.'
+additionalProperties: false
+submittable: true
+validators: null
+
+systemProperties:
+  - id
+  - project_id
+  - created_datetime
+  - updated_datetime
+  - state
+  - file_state
+  - error_type
+
+links:
+ - exclusive: false
+   required: true
+   subgroup:
+   - name: core_metadata_collections
+     backref: analysis_metadata_files
+     label: derived_from
+     target_type: core_metadata_collection
+     multiplicity: many_to_one
+     required: false
+
+required:
+  - submitter_id
+  - type
+  - file_name
+  - file_size
+  - md5sum
+  - data_category
+  - data_type
+  - data_format
+
+uniqueKeys:
+  - [ id ]
+  - [ project_id, submitter_id ]
+
+properties:
+  $ref: "_definitions.yaml#/data_file_properties"
+
+  data_category:
+    term:
+      $ref: _terms.yaml#/data_category
+    enum:
+      - Sequencing Data
+      - Sequencing Reads
+      - Raw Sequencing Data
+  data_type:
+    term:
+      $ref: _terms.yaml#/data_type
+    enum:
+      - Analysis Metadata
+  data_format:
+    term:
+      $ref: _terms.yaml#/data_format
+    enum:
+      - SRA XML
+      - MAGE-TAB
+      - SDRF
+      - IDF
+      - ADF
+
+  core_metadata_collections:
+    $ref: _definitions.yaml#/to_many
+
