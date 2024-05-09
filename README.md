@@ -13,7 +13,8 @@ See [USyd gen3 data dictionary repo](https://github.com/Sydney-Informatics-Hub/u
 1. Get a copy of the code 
 
 ```bash
-test -d usyd-gen3-data-dictionary || git submodule add https://github.com/Sydney-Informatics-Hub/usyd-gen3-data-dictionary usyd-gen3-data-dictionary
+git submodule add https://github.com/Sydney-Informatics-Hub/usyd-gen3-data-dictionary usyd-gen3-data-dictionary
+git submodule add https://github.com/AustralianBioCommons/gen3schemadev.git gen3schemadev 
 ```
 
 2. Launch containers. Need to have Docker desktop installed to run the following commands: 
