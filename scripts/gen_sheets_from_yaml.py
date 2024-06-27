@@ -71,7 +71,7 @@ def generate_links_sheet(bundle: gen3schemadev.ConfigBundle):
 
 
 if __name__ == "__main__":
-    FOLDER = "schema/kfc"
+    FOLDER = "schema/thyroid"
     bundle= gen3schemadev.ConfigBundle(FOLDER)
 
     obj_sheet = generate_objects_sheet(bundle)
