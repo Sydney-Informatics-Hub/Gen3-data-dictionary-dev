@@ -87,25 +87,35 @@ def generate_properties_sheet(bundle: gen3schemadev.ConfigBundle):
             if isinstance(prop_data,str):
                 continue
 
+            # Collect any term data
+            term_data = prop_data.get("termDef", {})
+            if isinstance(term_data, list):
+                res = dict.fromkeys(["term","source","term_id","term_url","cde_id","cde_version"],[])
+                for d in term_data:
+                    for k in d:
+                        res[k].append(d.get(k, None))
+                term_data = res
+
             prop_dict = {columns[0]: prop,
                          columns[1]: obj.get_id(),
-                         columns[2]: False, # need to check if property is in required block
+                         columns[2]: prop in obj.get_required(),
                          columns[3]: prop_data.get("type", None), #Need to be able to deal with enums, multiple types
                          columns[4]: prop_data.get("description", None),
-                         columns[5]: None, # need to find out how to deal with array_items_type
-                         columns[6]: False, # need to check if property is in preferred block
-                         columns[7]: None, # need to work out how format works
-                         columns[8]: prop_data.get("pattern", None), # same with pattern
+                         columns[5]: prop_data.get("items", {}).get("type", None),
+                         columns[6]: prop in obj.get_data().get("preferred", []),
+                         columns[7]: prop_data.get("format", None),
+                         columns[8]: prop_data.get("pattern", None), # pattern could get pushed to _definitions.yaml or _terms.yaml for terms. Follow?
                          columns[9]: prop_data.get("minimum", None),
                          columns[10]: prop_data.get("maximum", None),
                          columns[11]: prop_data.get("units", None), #this is a guess
-                         columns[12]: None, # termDef.term
-                         columns[13]: None, # term.$ref
-                         columns[14]: None, # termDef.source
-                         columns[15]: None, # termDef.cde_id ?
-                         columns[16]: None, # termDef.term_url
-                         columns[17]: None, # termDef.cde_id ?
-                         columns[18]: None, # termDef.cde_version
+                         columns[12]: term_data.get("term", None),
+                         columns[13]: prop_data.get("term", {}).get("$ref", None), 
+                         # if a term is only in the yaml by ref, do we want to grab the ref and populated other fields?
+                         columns[14]: term_data.get("source", None),
+                         columns[15]: term_data.get("term_id", None), # what about term_version?
+                         columns[16]: term_data.get("term_url", None),
+                         columns[17]: term_data.get("cde_id", None),
+                         columns[18]: term_data.get("cde_version", None),
             }
 
             data.append(prop_dict)
