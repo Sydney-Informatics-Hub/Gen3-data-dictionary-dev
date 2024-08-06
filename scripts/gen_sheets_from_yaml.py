@@ -90,9 +90,11 @@ def generate_properties_sheet(bundle: gen3schemadev.ConfigBundle):
             # Collect any term data
             term_data = prop_data.get("termDef", {})
             if isinstance(term_data, list):
-                res = dict.fromkeys(["term","source","term_id","term_url","cde_id","cde_version"],[])
+                # Property has a list of associated terms
+                keys = ["term","source","term_id","term_version","term_url","cde_id","cde_version"]
+                res = {k: [] for k in keys}
                 for d in term_data:
-                    for k in d:
+                    for k in res.keys():
                         res[k].append(d.get(k, None))
                 term_data = res
 
