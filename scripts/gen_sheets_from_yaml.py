@@ -31,6 +31,7 @@ def generate_objects_sheet(bundle : gen3schemadev.ConfigBundle):
         data.append(obj_data)
     return pd.DataFrame(data)
 
+
 def get_link_data(link: gen3schemadev.Gen3Link, id: str, group_name = None):
     columns = ["SCHEMA", "NAME", "PARENT", "BACKREF", "LABEL", "MULTIPLICITY", "REQUIRED", "SUBGROUP", "EXCLUSIVE",
                "SG_REQUIRED"]
@@ -72,18 +73,25 @@ def generate_links_sheet(bundle: gen3schemadev.ConfigBundle):
     return pd.DataFrame(data)
 
 
-def generate_properties_sheet(bundle: gen3schemadev.ConfigBundle):
+def generate_properties_sheets(bundle: gen3schemadev.ConfigBundle):
     columns = ["VARIABLE_NAME", "OBJECT", "REQUIRED", "TYPE", "DESCRIPTION", "ARRAY_ITEMS_TYPE", "PREFERRED",
                "FORMAT", "PATTERN", "NUM_MIN", "NUM_MAX", "UNITS", "TERM", "TERM_REF", "TERM_SOURCE", "TERM_ID",
                "TERM_URL", "CDE_ID", "CDE_VERSION"]
     
+    enum_columns = ["type_name", "enum", "enum_definition", "source", "term_id", "version"]
+    
     data = []
+    enum_data = []
+    
+    enum_id = 1
 
     for object_name in bundle.objects:
         obj = bundle.objects[object_name]
         properties = obj.get_properties()
         for prop in properties:
             prop_data = properties[prop]
+
+            # skip referred props
             if isinstance(prop_data,str):
                 continue
 
@@ -97,11 +105,37 @@ def generate_properties_sheet(bundle: gen3schemadev.ConfigBundle):
                     for k in res.keys():
                         res[k].append(d.get(k, None))
                 term_data = res
+            
+            # Handle enum properties
+            enum_type = None
+            if "enum" in prop_data:
+                enum_type = f"enum_{enum_id}"
+                enum_id = enum_id + 1
+
+                if "enumDef" in prop_data:
+                    enumDef = pd.DataFrame(prop_data["enumDef"]).set_index("enumeration")
+                else:
+                    enumDef = pd.DataFrame()
+                
+                for enum in prop_data["enum"]:
+                
+                    enum_dict = {enum_columns[0]: enum_type,
+                                 enum_columns[1]: enum,
+                    }
+
+                    if enum in enumDef.index:
+                        enum_dict[enum_columns[2]] = enum
+                        enum_dict[enum_columns[3]] = enumDef.at[enum,"source"]
+                        enum_dict[enum_columns[4]] = enumDef.at[enum,"term_id"]
+                        enum_dict[enum_columns[5]] = enumDef.at[enum,"version_date"]
+
+                    enum_data.append(enum_dict)
+            
 
             prop_dict = {columns[0]: prop,
                          columns[1]: obj.get_id(),
                          columns[2]: prop in obj.get_required(),
-                         columns[3]: prop_data.get("type", None), #Need to be able to deal with enums, multiple types
+                         columns[3]: prop_data.get("type", enum_type), #Need to be able to deal with enums, multiple types
                          columns[4]: prop_data.get("description", None),
                          columns[5]: prop_data.get("items", {}).get("type", None),
                          columns[6]: prop in obj.get_data().get("preferred", []),
@@ -122,7 +156,8 @@ def generate_properties_sheet(bundle: gen3schemadev.ConfigBundle):
 
             data.append(prop_dict)
 
-    return pd.DataFrame(data)
+    return pd.DataFrame(data), pd.DataFrame(enum_data)
+
 
 if __name__ == "__main__":
     FOLDER = "schema/thyroid"
@@ -130,4 +165,10 @@ if __name__ == "__main__":
 
     obj_sheet = generate_objects_sheet(bundle)
     link_sheet = generate_links_sheet(bundle)
-    properties_sheet = generate_properties_sheet(bundle)
+    properties_sheet, enum_sheet = generate_properties_sheets(bundle)
+    
+    with pd.ExcelWriter('output.xlsx') as writer:
+        obj_sheet.to_excel(writer, sheet_name='object_definitions')
+        link_sheet.to_excel(writer, sheet_name='link_definitions')
+        properties_sheet.to_excel(writer, sheet_name='property_definitions')
+        enum_sheet.to_excel(writer, sheet_name='enum_definitions')
