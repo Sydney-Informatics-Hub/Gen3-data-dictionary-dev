@@ -32,11 +32,16 @@ def generate_objects_sheet(bundle : gen3schemadev.ConfigBundle):
     return pd.DataFrame(data)
 
 
-def get_link_data(link: gen3schemadev.Gen3Link, id: str, group_name = None):
+def get_link_data(link: gen3schemadev.Gen3Link, id: str, group: gen3schemadev.Gen3LinkGroup | None = None, group_name = None):
     columns = ["SCHEMA", "NAME", "PARENT", "BACKREF", "LABEL", "MULTIPLICITY", "REQUIRED", "SUBGROUP", "EXCLUSIVE",
                "SG_REQUIRED"]
     data = {}
     link_data = link.get_data()
+
+    if group:
+        group_data = group.get_data()
+    else:
+        group_data = {}
 
     data[columns[0]] = id
     data[columns[1]] = link_data["name"]
@@ -45,9 +50,9 @@ def get_link_data(link: gen3schemadev.Gen3Link, id: str, group_name = None):
     data[columns[4]] = link_data["label"]
     data[columns[5]] = link_data["multiplicity"]
     data[columns[6]] = link_data.get("required", None)
-    data[columns[7]] = group_name #link_data.get("subgroup", None)
-    data[columns[8]] = link_data.get("exclusive", None) # This needs to come from the higher level LinkGroup not the link itself
-    data[columns[9]] = link_data.get("sg_required", None) # This needs to come from the higher level LinkGroup not the link itself
+    data[columns[7]] = group_name
+    data[columns[8]] = group_data.get("exclusive", None)
+    data[columns[9]] = group_data.get("required", None)
     return data
 
 def generate_links_sheet(bundle: gen3schemadev.ConfigBundle):
@@ -65,8 +70,8 @@ def generate_links_sheet(bundle: gen3schemadev.ConfigBundle):
                 # And test on yaml files where there are subgroups present - e.g. annotation
                 # schema_counts[object_name] = schema_counts.get(object_name, 1) + 1
                 grp_id = grp_id+1
-                for link in link.get_links():
-                    link_data = get_link_data(link, obj.get_id(), group_name)
+                for l in link.get_links():
+                    link_data = get_link_data(l, obj.get_id(), link, group_name)
                     data.append(link_data)
             else:
                 data.append(get_link_data(link,obj.get_id()))
@@ -135,7 +140,7 @@ def generate_properties_sheets(bundle: gen3schemadev.ConfigBundle):
             prop_dict = {columns[0]: prop,
                          columns[1]: obj.get_id(),
                          columns[2]: prop in obj.get_required(),
-                         columns[3]: prop_data.get("type", enum_type), #Need to be able to deal with enums, multiple types
+                         columns[3]: prop_data.get("type", enum_type), #What about multiple types?
                          columns[4]: prop_data.get("description", None),
                          columns[5]: prop_data.get("items", {}).get("type", None),
                          columns[6]: prop in obj.get_data().get("preferred", []),
